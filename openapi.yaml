@@ -1,0 +1,25 @@
+openapi: 3.0.3
+info:
+  title: rn-blueprint API (placeholder)
+  version: 0.1.0
+  description: |
+    実際のバックエンドの OpenAPI 仕様に差し替えるためのプレースホルダー。
+    `pnpm generate:api` でこのファイルから src/generated 配下に型付き API クライアントを生成する。
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: ヘルスチェック
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                required:
+                  - status
