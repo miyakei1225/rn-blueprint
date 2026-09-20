@@ -1,0 +1,34 @@
+# 変更のあったパッケージの CI だけを走らせるための paths-filter 定義。
+# ルートの設定ファイルは全パッケージのビルドに影響するため、どのフィルタにも含める。
+spec:
+  - "packages/api-spec/**"
+  - ".github/workflows/ci.yml"
+  - ".github/workflows/spec_ci.yml"
+  - ".github/filters.yml"
+  - ".mise.toml"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "pnpm-workspace.yaml"
+
+mobile:
+  - "packages/mobile/**"
+  - "openapi.yaml"
+  - ".github/workflows/ci.yml"
+  - ".github/workflows/mobile_ci.yml"
+  - ".github/filters.yml"
+  - ".mise.toml"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "pnpm-workspace.yaml"
+
+server:
+  - "packages/server/**"
+  - "openapi.yaml"
+  - "Dockerfile"
+  - ".github/workflows/ci.yml"
+  - ".github/workflows/server_ci.yml"
+  - ".github/filters.yml"
+  - ".mise.toml"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "pnpm-workspace.yaml"

@@ -1,0 +1,21 @@
+api-spec:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "packages/api-spec/**"
+          - "openapi.yaml"
+
+mobile:
+  - changed-files:
+      - any-glob-to-any-file: "packages/mobile/**"
+
+server:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "packages/server/**"
+          - "Dockerfile"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "**/*.md"

@@ -1,0 +1,24 @@
+# gcloud run deploy --source . でアップロードしない対象。
+# .gcloudignore があると .gitignore は参照されないため、ここで明示する。
+# packages/mobile/package.json は Dockerfile の --frozen-lockfile 検証に必要なので除外しない。
+
+.git
+.gitignore
+
+node_modules
+**/node_modules
+
+packages/mobile/ios
+packages/mobile/android
+packages/mobile/.expo
+packages/mobile/dist
+packages/mobile/assets
+packages/server/dist
+
+.env
+**/.env
+**/.env.*
+*.log
+.DS_Store
+
+docs

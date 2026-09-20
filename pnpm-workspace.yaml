@@ -1,0 +1,11 @@
+packages:
+  - "packages/*"
+
+# React Native は node_modules がフラットに並んでいる前提の autolinking を行うため、
+# pnpm 既定の isolated linker では expo prebuild / EAS ビルドがネイティブモジュールを
+# 解決できない。Expo 公式のモノレポ手順に従って hoisted linker を使う。
+# https://docs.expo.dev/guides/monorepos/
+nodeLinker: hoisted
+
+# 社内ポリシー: リリースから 14 日以上経過したバージョンのみ解決する
+minimumReleaseAge: 20160

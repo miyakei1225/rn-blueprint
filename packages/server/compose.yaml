@@ -1,0 +1,32 @@
+# プロジェクト名を明示する。既定ではディレクトリ名 (server) が使われるため、
+# 同じ構成の別リポジトリを並べて開いているとコンテナとボリュームを共有してしまい、
+# 一方の `pnpm db:down` がもう一方のデータを消す。
+name: rn-blueprint
+
+services:
+  postgres:
+    # Cloud SQL のインスタンスと同じメジャーバージョンに揃える (README の初回セットアップ参照)
+    image: postgres:18.4
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blueprint
+    ports:
+      - "5432:5432"
+    volumes:
+      # 名前付きボリュームにして、どのデータ領域を使っているかを追えるようにする。
+      # PostgreSQL 18 以降のイメージはデータを /var/lib/postgresql/<major>/docker に置くため、
+      # マウント先は data ではなく親ディレクトリにする
+      - postgres-data:/var/lib/postgresql
+      # db/sql/ が DDL の SoT。初回起動時にファイル名の昇順で流し込まれる
+      - ./db/sql:/docker-entrypoint-initdb.d:ro
+      # シードは自動実行しない。`pnpm db:seed` から psql -f で流し込む
+      - ./db:/db:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d blueprint"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
