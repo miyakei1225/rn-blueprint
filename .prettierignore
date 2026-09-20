@@ -1,0 +1,10 @@
+# 生成物 (手で編集しないファイル)
+openapi.yaml
+packages/mobile/src/generated/
+packages/mobile/expo-env.d.ts
+packages/server/src/infra/db/schema.ts
+
+# 配布・ビルド成果物
+pnpm-lock.yaml
+dist/
+.expo/

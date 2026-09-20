@@ -1,0 +1,9 @@
+emit:
+  - "@typespec/openapi3"
+options:
+  "@typespec/openapi3":
+    # 生成先はリポジトリルート。packages/mobile の openapi-ts が入力に取る。
+    emitter-output-dir: "{project-root}/../.."
+    output-file: "openapi.yaml"
+    openapi-versions:
+      - 3.1.0

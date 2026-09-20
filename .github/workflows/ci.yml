@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      spec: ${{ steps.filter.outputs.spec }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: filter
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        with:
+          filters: .github/filters.yml
+
+  spec_ci:
+    needs: filter
+    if: ${{ needs.filter.outputs.spec == 'true' }}
+    uses: ./.github/workflows/spec_ci.yml
+
+  mobile_ci:
+    needs: filter
+    if: ${{ needs.filter.outputs.mobile == 'true' }}
+    uses: ./.github/workflows/mobile_ci.yml
+
+  server_ci:
+    needs: filter
+    if: ${{ needs.filter.outputs.server == 'true' }}
+    uses: ./.github/workflows/server_ci.yml
+
+  # ブランチ保護はこの 1 つを必須チェックにする。
+  # スキップされたジョブを成功扱いにしないと、変更の無いパッケージがあるたびに保護が通らなくなる。
+  checks:
+    if: ${{ always() }}
+    needs:
+      - spec_ci
+      - mobile_ci
+      - server_ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS"

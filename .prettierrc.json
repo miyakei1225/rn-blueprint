@@ -1,0 +1,14 @@
+{
+  "printWidth": 100,
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "overrides": [
+    {
+      "files": "packages/mobile/**/*.{ts,tsx,js}",
+      "options": { "tailwindConfig": "./packages/mobile/tailwind.config.js" }
+    },
+    {
+      "files": "*.tsp",
+      "options": { "plugins": ["@typespec/prettier-plugin-typespec"] }
+    }
+  ]
+}

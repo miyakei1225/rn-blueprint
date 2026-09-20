@@ -1,25 +1,109 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
-  title: rn-blueprint API (placeholder)
+  title: rn-blueprint API
   version: 0.1.0
-  description: |
-    実際のバックエンドの OpenAPI 仕様に差し替えるためのプレースホルダー。
-    `pnpm generate:api` でこのファイルから src/generated 配下に型付き API クライアントを生成する。
+  description: |-
+    `packages/server` の実装に対応する仕様。
+
+    リポジトリルートの openapi.yaml は packages/api-spec の .tsp から生成している。
+    手で編集せず、.tsp を直して `pnpm generate:api` を実行すること。
+
+    ローカルは `pnpm run dev:server` で http://localhost:3000 に立つ。
+    接続先はアプリ側の EXPO_PUBLIC_API_URL で指定するため、
+    ここに servers を書かない (生成クライアントに既定 baseUrl が焼き込まれ、
+    apiClient.ts を経由し忘れたときに別ホストへ黙って飛ぶため)。
+tags:
+  - name: system
 paths:
   /health:
     get:
       operationId: getHealth
       summary: ヘルスチェック
+      parameters: []
       responses:
-        "200":
-          description: OK
+        '200':
+          description: The request has succeeded.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-                required:
-                  - status
+                $ref: '#/components/schemas/HealthResponse'
+      tags:
+        - system
+components:
+  schemas:
+    BadRequestError:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          $ref: '#/components/schemas/Error'
+      description: リクエストが不正
+    ConflictError:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          $ref: '#/components/schemas/Error'
+      description: 対象の現在の状態では実行できない
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          examples:
+            - NOT_FOUND
+        message:
+          type: string
+    ForbiddenError:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          $ref: '#/components/schemas/Error'
+      description: 認証は通っているが、その操作を行う権限が無い
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - dbReachable
+      properties:
+        status:
+          type: string
+          examples:
+            - ok
+        dbReachable:
+          type: boolean
+          description: DB への疎通が取れているか。DB が落ちていても応答自体は 200 を返す
+        revision:
+          type: string
+          description: Cloud Run のリビジョン名。ローカルでは "local"
+          examples:
+            - rn-blueprint-api-00001-abc
+        uptime:
+          type: number
+          format: double
+          description: プロセス起動からの経過秒数
+          examples:
+            - 12.345
+    NotFoundError:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          $ref: '#/components/schemas/Error'
+      description: 対象が存在しない
+    UnauthorizedError:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          $ref: '#/components/schemas/Error'
+      description: ID トークンが無い、または検証に失敗した
